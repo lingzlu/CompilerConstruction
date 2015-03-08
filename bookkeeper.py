@@ -1,17 +1,22 @@
 class Bookkeeper:
     """
-    This represents a token.  It has a type, a lexeme, and line number
+    Responsible for maintaining a symbol table to store tokens passed from scanner
+    that are identifier or constant, each token appear only once
     """
     def __init__(self):
         """
         The Constructor to create a token with lexeme, type, and line number
         """
-        self.symtab = {}  # symbol table
+        self.symtab = {}  # initialize an empty dictionary set
 
     def insert(self, token):
-        self.symtab[token.lexeme] = token.type
+        """
+        key-value pairs, key: token, value: token type
+        Set will automatically maintains an unique table
+        """
+        self.symtab[token.lexeme] = token.type  # insert new entry
 
-    def printTable(self):
+    def printTable(self): # print the symbol table to a file
         output = open("symbolTable.txt", "w")
         output.write ("Symbol Table\n")
         for token in self.symtab:

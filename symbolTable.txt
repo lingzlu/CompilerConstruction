@@ -1,11 +1,11 @@
 Symbol Table
-k	ID
-tt	ID
 y	ID
-47	CONST
-i	ID
-x	ID
+k	ID
 5	CONST
-j	ID
+i	ID
+tt	ID
 ff	ID
+47	CONST
 c	ID
+j	ID
+x	ID
