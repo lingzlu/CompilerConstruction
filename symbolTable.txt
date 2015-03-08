@@ -1,0 +1,11 @@
+Symbol Table
+k	ID
+tt	ID
+y	ID
+47	CONST
+i	ID
+x	ID
+5	CONST
+j	ID
+ff	ID
+c	ID
