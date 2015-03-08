@@ -32,8 +32,8 @@ def main():
                 errorMessage = scanner.errorHandler(token.lexicalError)
                 output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, errorMessage, token.lineNum))
 
-        if token.type == "ID" or token.type == "CONST":
-            symtab.insert(token)
+            if token.type == "ID" or token.type == "CONST":
+                symtab.insert(token)
     symtab.printTable()
 
 if __name__ == '__main__':
