@@ -1,5 +1,6 @@
 from scanner import Scanner
 from bookkeeper import Bookkeeper
+import sys
 
 class Stack:
     def __init__(self):
@@ -26,7 +27,7 @@ class Stack:
 
 class Parser(object):
 
-    token_lookup = ["$","[id]]","[const]","package", "import","abstract","final","sealed","private",
+    token_lookup = ["$","[id]","[const]","package", "import","abstract","final","sealed","private",
                             "protected","class","object","val","def","<=","if","else","while","case","=>","in",
                             "print","return","not","true","false","and","or","int","real","bool",
                             ";","{","}","(", ")",":",",","=","+","*","@",
@@ -78,7 +79,7 @@ class Parser(object):
                             40:[17,34,65,35,52],
                             41:[18,1,38,65,19,52],
                             42:[20,34,55,35],
-                            43:[31,34,55,35],
+                            43:[21,34,55,35],
                             44:[22,34,65,35],
                             45:[66],
                             46:[68],
@@ -183,7 +184,7 @@ class Parser(object):
         },
         53: {
             12:29,
-            12:30
+            13:30
         },
         54: {
             1:31
@@ -197,9 +198,9 @@ class Parser(object):
             35:34
         },
         57: {
-            28,35,
-            29,36,
-            30,37
+            28:35,
+            29:36,
+            30:37
         },
         58: {
             1:38
@@ -208,7 +209,7 @@ class Parser(object):
             15:39
         },
         60:{
-            16:40
+            17:40
         },
         61:{
             18:41
@@ -264,13 +265,92 @@ class Parser(object):
         self.stack = Stack()
         self.stack.push(0)
         self.stack.push(42)
-        scanner = Scanner("source.txt")
 
     def executeRule(self,ruleNum):
         self.stack.pop()
-        for item in reversed(Parser.syntax_rules[ruleNum]):
-            self.stack.push(item)
+        try:
+            ruleItems = Parser.syntax_rules[ruleNum]
+        except:
+            print ("Rule not found: ", ruleNum)
+            return 0
+
+        for item in reversed(ruleItems):
+            if item != -1:
+                self.stack.push(item)
 
     def findRule(self, stackTop, lookahead):
-        return Parser.parse_table[stackTop][lookahead]
+        try:
+            rule = Parser.parse_table[stackTop][lookahead]
+        except:
+            print ("Parse Table lookup failed: ", stackTop, " ", lookahead)
+            return 0
+        return rule
 
+    def get_token(self, token):
+        try:
+            tokenValue = Parser.token_lookup.index(token)
+        except:
+            print ("in token: ", token)
+            return -1
+
+        return tokenValue
+
+    def parsing(self):
+        symtab = Bookkeeper()
+        step = 1
+        scanner = Scanner("source.txt")  # pass source file to the scanner
+        output = open("parse_output", "w")  # open the output file
+        output.write("Steps\tStack Top\tLookahead\tAction\n")  # write header line
+        token = scanner.nextToken()
+        lookahead = self.get_token(token.lexeme)
+
+        while True:
+            stackTop = self.stack.peek()
+            if (stackTop in range(1,42) and stackTop == lookahead):
+                output.write ("%d\t%s %d\t%s %d\t%s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+                   Parser.token_lookup[lookahead], lookahead, "match"))
+
+                self.stack.pop()
+                token = scanner.nextToken()
+                if not token:  # this only true when end of file reached
+                    print ("end file")
+                    break
+
+                if token.type == "ID":
+                    token = "[id]"
+
+                elif token.type == "CONST":
+                    token = "[const]"
+                else:
+                    token = token.lexeme
+
+                lookahead = self.get_token(token)
+
+            else:
+                ruleNum = self.findRule(stackTop, lookahead)
+
+
+                self.executeRule(ruleNum)
+                output.write ("%d\t%s %s\t%s %s\tRule %s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+                   Parser.token_lookup[lookahead], lookahead, ruleNum))
+
+            step += 1
+
+
+
+        # while True:
+        #     tokens = scanner.nextToken()
+        #     if not tokens:  # this only true when end of file reached
+        #         break
+        #     for token in tokens:  # might have 2 tokens when a special symbol follows
+        #         if not token.lexicalError:
+        #             output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, token.type, token.lineNum))
+        #         else:
+        #             errorMessage = scanner.errorHandler(token.lexicalError)
+        #             output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, errorMessage, token.lineNum))
+
+        #         if token.type == "ID" or token.type == "CONST":
+        #             symtab.insert(token)
+
+        #         step += 1
+        # symtab.printTable()

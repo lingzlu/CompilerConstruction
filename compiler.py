@@ -17,32 +17,31 @@ sourceFile = "source.txt"
 outputFile = "tokenOutput.txt"
 
 def main():
-    symtab = Bookkeeper()
-    step = 1
-    scanner = Scanner(sourceFile)  # pass source file to the scanner
-    output = open(outputFile, "w")  # open the output file
-    output.write("Steps\tTokens\tTypes\tLine #\n")  # write header line
-    while True:
-        tokens = scanner.nextToken()
-        if not tokens:  # this only true when end of file reached
-            break
-        for token in tokens:  # might have 2 tokens when a special symbol follows
-            if not token.lexicalError:
-                output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, token.type, token.lineNum))
-            else:
-                errorMessage = scanner.errorHandler(token.lexicalError)
-                output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, errorMessage, token.lineNum))
+    # symtab = Bookkeeper()
+    # step = 1
+    # scanner = Scanner(sourceFile)  # pass source file to the scanner
+    # output = open(outputFile, "w")  # open the output file
+    # output.write("Steps\tTokens\tTypes\tLine #\n")  # write header line
+    # while True:
+    #     token = scanner.nextToken()
+    #     if not token :  # this only true when end of file reached
+    #         break
+    #    # for token in tokens:  # might have 2 tokens when a special symbol follows
+    #     if not token.lexicalError:
+    #         output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, token.type, token.lineNum))
+    #     else:
+    #         errorMessage = scanner.errorHandler(token.lexicalError)
+    #         output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, errorMessage, token.lineNum))
 
-            if token.type == "ID" or token.type == "CONST":
-                symtab.insert(token)
+    #     if token.type == "ID" or token.type == "CONST":
+    #         symtab.insert(token)
 
-            step += 1
-    symtab.printTable()
+    #     step += 1
+    # symtab.printTable()
 
     parser = Parser()
-    parser.executeRule(1)
-    parser.stack.print_stack()
-    print (parser.findRule(67,40))
+    parser.parsing()
+
 
 
 if __name__ == '__main__':

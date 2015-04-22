@@ -20,6 +20,7 @@ class Scanner:
         self.lexeme = ""  #buffer to store scanned character
         self.tokens = []  # store next recognized tokens
         self.lexicalError = None
+        self.tokenBuffer=""
 
     def getNextValidChar(self):
         """
@@ -48,11 +49,16 @@ class Scanner:
         this function might return up to 2 tokens when a special symbol is
         concatenate with another token
         """
+        if self.tokenBuffer:
+            temp = self.tokenBuffer
+            self.tokenBuffer = ""
+            return temp
 
         # initial variables for new token
         self.lexeme = ""
         self.tokens = []
         self.lexicalError = None
+
 
         char = self.getNextValidChar()
         if not char:  # end of the file found
@@ -108,7 +114,14 @@ class Scanner:
             token.lexicalError = LexicalError.UnrecognizedSymbol
             self.tokens.append(token)
 
-        return self.tokens
+        if not self.tokens:
+            return None
+
+        if len(self.tokens) > 1:
+            self.tokenBuffer = self.tokens[1]
+
+
+        return self.tokens[0]
 
     def errorHandler(self, error):
         """
