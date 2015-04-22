@@ -1,4 +1,5 @@
 Steps	Stack Top	Lookahead	Action
+1	Z0 0	- -	push <scala>
 1	<scala> 42	package 3	Rule 1
 2	<packages> 43	package 3	Rule 2
 3	package 3	package 3	match
@@ -18,7 +19,7 @@ Steps	Stack Top	Lookahead	Action
 17	[id] 1	[id] 1	match
 18	; 31	; 31	match
 19	<imports> 44	abstract 5	Rule 5
-20	<scala-body 45	abstract 5	Rule 6
+20	<scala-body> 45	abstract 5	Rule 6
 21	<subbody> 46	abstract 5	Rule 8
 22	<modifier> 47	abstract 5	Rule 9
 23	abstract 5	abstract 5	match
@@ -116,7 +117,7 @@ Steps	Stack Top	Lookahead	Action
 115	; 31	; 31	match
 116	<stmts> 51	} 33	Rule 19
 117	} 33	} 33	match
-118	<scala-body 45	protected 9	Rule 6
+118	<scala-body> 45	protected 9	Rule 6
 119	<subbody> 46	protected 9	Rule 8
 120	<modifier> 47	protected 9	Rule 13
 121	protected 9	protected 9	match
@@ -203,7 +204,7 @@ Steps	Stack Top	Lookahead	Action
 202	; 31	; 31	match
 203	<stmts> 51	} 33	Rule 19
 204	} 33	} 33	match
-205	<scala-body 45	private 8	Rule 6
+205	<scala-body> 45	private 8	Rule 6
 206	<subbody> 46	private 8	Rule 8
 207	<modifier> 47	private 8	Rule 12
 208	private 8	private 8	match
@@ -258,3 +259,4 @@ Steps	Stack Top	Lookahead	Action
 257	; 31	; 31	match
 258	<stmts> 51	} 33	Rule 19
 259	} 33	} 33	match
+259	<scala-body> 45	$ 70	Rule 7

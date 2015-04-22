@@ -16,3 +16,4 @@ private class {
   val tt, ff : bool;
   return (not (true or @ x 5) and false);
 }
+$

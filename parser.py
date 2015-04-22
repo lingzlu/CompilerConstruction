@@ -27,14 +27,14 @@ class Stack:
 
 class Parser(object):
 
-    token_lookup = ["$","[id]","[const]","package", "import","abstract","final","sealed","private",
+    token_lookup = ["Z0","[id]","[const]","package", "import","abstract","final","sealed","private",
                             "protected","class","object","val","def","<=","if","else","while","case","=>","in",
                             "print","return","not","true","false","and","or","int","real","bool",
                             ";","{","}","(", ")",":",",","=","+","*","@",
-                            "<scala>","<packages>","<imports>","<scala-body","<subbody>","<modifier>",
+                            "<scala>","<packages>","<imports>","<scala-body>","<subbody>","<modifier>",
                             "<subbody-tail>","<tail-type>","<block>","<stmts>","<stmt>","<dcl>","<dcl-tail>",
                             "<ids>","<more-ids>","<type>","<asmt>","<if>","<while>","<case>","<in>","<out>",
-                            "<return>","<expr>","<arith-expr>","<arith>","<bool-expr>","<bool>"]
+                            "<return>","<expr>","<arith-expr>","<arith>","<bool-expr>","<bool>","$"]
 
 
     syntax_rules = {1:[43,44,45],
@@ -130,7 +130,8 @@ class Parser(object):
             6:6,
             7:6,
             8:6,
-            9:6
+            9:6,
+            70:7
         },
         46: {
             5:8,
@@ -263,8 +264,6 @@ class Parser(object):
 
     def __init__(self):
         self.stack = Stack()
-        self.stack.push(0)
-        self.stack.push(42)
 
     def executeRule(self,ruleNum):
         self.stack.pop()
@@ -296,11 +295,20 @@ class Parser(object):
         return tokenValue
 
     def parsing(self):
-        symtab = Bookkeeper()
+
+
         step = 1
         scanner = Scanner("source.txt")  # pass source file to the scanner
         output = open("parse_output", "w")  # open the output file
         output.write("Steps\tStack Top\tLookahead\tAction\n")  # write header line
+
+
+        self.stack.push(0)
+        stackTop = self.stack.peek()
+        output.write ("%d\t%s %s\t%s %s\t%s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+           "-", "-", "push <scala>"))
+        self.stack.push(42)
+
         token = scanner.nextToken()
         lookahead = self.get_token(token.lexeme)
 
@@ -312,9 +320,6 @@ class Parser(object):
 
                 self.stack.pop()
                 token = scanner.nextToken()
-                if not token:  # this only true when end of file reached
-                    print ("end file")
-                    break
 
                 if token.type == "ID":
                     token = "[id]"
@@ -326,9 +331,16 @@ class Parser(object):
 
                 lookahead = self.get_token(token)
 
+                if token == "$":  # end of file marker
+                    stackTop = self.stack.peek()
+                    ruleNum = self.findRule(stackTop, lookahead)
+                    self.executeRule(ruleNum)
+                    output.write ("%d\t%s %s\t%s %s\tRule %s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+                       Parser.token_lookup[lookahead], lookahead, ruleNum))
+                    return True
+
             else:
                 ruleNum = self.findRule(stackTop, lookahead)
-
 
                 self.executeRule(ruleNum)
                 output.write ("%d\t%s %s\t%s %s\tRule %s\n"% (step, Parser.token_lookup[stackTop], stackTop,
