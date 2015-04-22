@@ -1,8 +1,10 @@
 from scanner import Scanner
 from bookkeeper import Bookkeeper
-import sys
 
 class Stack:
+    """
+    stack implementation using list
+    """
     def __init__(self):
         self.items = []
 
@@ -26,7 +28,10 @@ class Stack:
 
 
 class Parser(object):
-
+    """
+    LL(1) parser implementation
+    """
+    # integer coding of tokens, corresponding to index of token
     token_lookup = ["Z0","[id]","[const]","package", "import","abstract","final","sealed","private",
                             "protected","class","object","val","def","<=","if","else","while","case","=>","in",
                             "print","return","not","true","false","and","or","int","real","bool",
@@ -36,7 +41,8 @@ class Parser(object):
                             "<ids>","<more-ids>","<type>","<asmt>","<if>","<while>","<case>","<in>","<out>",
                             "<return>","<expr>","<arith-expr>","<arith>","<bool-expr>","<bool>","$"]
 
-
+    # syntax rules representation for simple-scala language using dictionary
+    #key: rule number, value: integer coded of productions
     syntax_rules = {1:[43,44,45],
                             2:[3,1,31,43],
                             3:[-1],
@@ -98,6 +104,11 @@ class Parser(object):
                             59:[-1],
                             }
 
+    # parse table for the grammer rules
+    # 2 layer dictionary format
+    # outter keys are non-terminal symbols (stack top),
+    # inner keys are terminal symbols (lookaheads)
+    # inner values are corresponding rules for  given stack top and lookahead
     parse_table ={
         42: {
             3:1,
@@ -264,105 +275,127 @@ class Parser(object):
 
     def __init__(self):
         self.stack = Stack()
+        self.symtab = Bookkeeper()
 
     def executeRule(self,ruleNum):
+        """
+        given rule number and push rule items to the stack
+        """
+        #remove stack top token
         self.stack.pop()
+
         try:
             ruleItems = Parser.syntax_rules[ruleNum]
         except:
-            print ("Rule not found: ", ruleNum)
-            return 0
+            print ("Grammar does not have rule number: ", ruleNum)
 
+        # push the rule items to stack in reversed order
         for item in reversed(ruleItems):
+            # -1 represent epsilon move, which will be skip
             if item != -1:
                 self.stack.push(item)
 
     def findRule(self, stackTop, lookahead):
+        """
+        given stack top and lookahead symbol, find the next deterministic move
+        using LL(1) parse table
+        """
         try:
             rule = Parser.parse_table[stackTop][lookahead]
         except:
-            print ("Parse Table lookup failed: ", stackTop, " ", lookahead)
-            return 0
+            print ("Parse Table lookup failed, stack top: %d, lookahead %d"%(stackTop, lookahead))
+            return -1
         return rule
 
     def get_token(self, token):
+        """
+        find the integer representation of the token
+        """
         try:
             tokenValue = Parser.token_lookup.index(token)
         except:
-            print ("in token: ", token)
+            print ("Token is not a reserved keyword, identifier, or constant? ", token)
             return -1
 
         return tokenValue
 
-    def parsing(self):
-
-
+    def parsing(self, sourceFile):
+        """
+        start paring the source file
+        """
         step = 1
-        scanner = Scanner("source.txt")  # pass source file to the scanner
-        output = open("parse_output", "w")  # open the output file
-        output.write("Steps\tStack Top\tLookahead\tAction\n")  # write header line
+        scanner = Scanner(sourceFile)  # pass source file to the scanner
+        output = open("parse_output.txt", "w")  # open the output file
+        output.write("{:<6}{:>14}  {:<6}{:>14}  {:<6}{:>14}\n".format("Steps", "Stack Top","Num","Lookahead","Num","Action"))
+        output.write("-"*70+"\n")
 
-
-        self.stack.push(0)
+        self.stack.push(0) # push stack bottom marker
         stackTop = self.stack.peek()
-        output.write ("%d\t%s %s\t%s %s\t%s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+        output.write ("{:<6}{:>14}  {:<6}{:>14}  {:<6}{:>14}\n".format(step, Parser.token_lookup[stackTop], stackTop,
            "-", "-", "push <scala>"))
-        self.stack.push(42)
+        step += 1
 
+        self.stack.push(42) # push <scala>
+
+        # scanner first token, token object contains lexeme and type
         token = scanner.nextToken()
-        lookahead = self.get_token(token.lexeme)
+        token_lex = token.lexeme
 
+        # get the token value
+        lookahead = self.get_token(token_lex)
+
+        # loop until all source code scanned or an error occured
         while True:
             stackTop = self.stack.peek()
+
+            # if stack top is bottom marker and end of source file: accept!
+            if stackTop == 0 and not scanner.nextToken():
+                output.write ("{:<6}{:>14}  {:<6}{:>14}  {:<6}{:>14}\n".format(step, Parser.token_lookup[stackTop], stackTop,
+                       "-","-", "ACCEPT!"))
+                output.close()
+                break
+
+            # if stack top is one of terminal symbols and matches lookahead symbol
+            # pop the stack top and read next token
             if (stackTop in range(1,42) and stackTop == lookahead):
-                output.write ("%d\t%s %d\t%s %d\t%s\n"% (step, Parser.token_lookup[stackTop], stackTop,
+                output.write ("{:<6}{:>14}  {:<6}{:>14}  {:<6}{:>14}\n".format(step, Parser.token_lookup[stackTop], stackTop,
                    Parser.token_lookup[lookahead], lookahead, "match"))
 
+                # symbol matched, pop stack and get next token
                 self.stack.pop()
                 token = scanner.nextToken()
 
+                # assign lexeme of [id] if token is of type identifier
                 if token.type == "ID":
-                    token = "[id]"
+                    self.symtab.insert(token)
+                    token_lex = "[id]"
 
+                # assign lexeme of [const] if token is of type constant
                 elif token.type == "CONST":
-                    token = "[const]"
+                    self.symtab.insert(token)
+                    token_lex = "[const]"
                 else:
-                    token = token.lexeme
+                    token_lex = token.lexeme
 
-                lookahead = self.get_token(token)
+                # get token value
+                lookahead = self.get_token(token_lex)
 
-                if token == "$":  # end of file marker
-                    stackTop = self.stack.peek()
-                    ruleNum = self.findRule(stackTop, lookahead)
-                    self.executeRule(ruleNum)
-                    output.write ("%d\t%s %s\t%s %s\tRule %s\n"% (step, Parser.token_lookup[stackTop], stackTop,
-                       Parser.token_lookup[lookahead], lookahead, ruleNum))
-                    return True
+            # stack top is a terminal symbol but lookahead does not match, handle error
+            elif stackTop in range(1,42):
+                print ("Expecting token %s at line %s, but found %s\n" %(Parser.token_lookup[stackTop],
+                    token.lineNum, token.lexeme))
 
+            # stack top is a non-terminal symbol
             else:
+                # find rule for with stack top symbol and lookahead
                 ruleNum = self.findRule(stackTop, lookahead)
+                if ruleNum == -1: # parse table can't find possible next move
+                    print ("Syntax error caught by parser at line %s, token: %s\n" %(token.lineNum, token.lexeme))
+                    break
 
                 self.executeRule(ruleNum)
-                output.write ("%d\t%s %s\t%s %s\tRule %s\n"% (step, Parser.token_lookup[stackTop], stackTop,
-                   Parser.token_lookup[lookahead], lookahead, ruleNum))
+                output.write ('{:<6}{:>14}  {:<6}{:>14}  {:<6}{:>14}\n'.format(step, Parser.token_lookup[stackTop], stackTop,
+                   Parser.token_lookup[lookahead], lookahead, "Rule "+ str(ruleNum)))
 
+            # increment step counter for output
             step += 1
-
-
-
-        # while True:
-        #     tokens = scanner.nextToken()
-        #     if not tokens:  # this only true when end of file reached
-        #         break
-        #     for token in tokens:  # might have 2 tokens when a special symbol follows
-        #         if not token.lexicalError:
-        #             output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, token.type, token.lineNum))
-        #         else:
-        #             errorMessage = scanner.errorHandler(token.lexicalError)
-        #             output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, errorMessage, token.lineNum))
-
-        #         if token.type == "ID" or token.type == "CONST":
-        #             symtab.insert(token)
-
-        #         step += 1
-        # symtab.printTable()

@@ -1,0 +1,264 @@
+Steps      Stack Top  Num        Lookahead  Num           Action
+----------------------------------------------------------------------
+1                 Z0  0                  -  -       push <scala>
+2            <scala>  42           package  3             Rule 1
+3         <packages>  43           package  3             Rule 2
+4            package  3            package  3              match
+5               [id]  1               [id]  1              match
+6                  ;  31                 ;  31             match
+7         <packages>  43           package  3             Rule 2
+8            package  3            package  3              match
+9               [id]  1               [id]  1              match
+10                 ;  31                 ;  31             match
+11        <packages>  43            import  4             Rule 3
+12         <imports>  44            import  4             Rule 4
+13            import  4             import  4              match
+14              [id]  1               [id]  1              match
+15                 ;  31                 ;  31             match
+16         <imports>  44            import  4             Rule 4
+17            import  4             import  4              match
+18              [id]  1               [id]  1              match
+19                 ;  31                 ;  31             match
+20         <imports>  44          abstract  5             Rule 5
+21      <scala-body>  45          abstract  5             Rule 6
+22         <subbody>  46          abstract  5             Rule 8
+23        <modifier>  47          abstract  5             Rule 9
+24          abstract  5           abstract  5              match
+25    <subbody-tail>  48             class  10           Rule 14
+26       <tail-type>  49             class  10           Rule 15
+27             class  10             class  10             match
+28           <block>  50                 {  32           Rule 17
+29                 {  32                 {  32             match
+30           <stmts>  51               val  12           Rule 18
+31            <stmt>  52               val  12           Rule 20
+32             <dcl>  53               val  12           Rule 29
+33               val  12               val  12             match
+34        <dcl-tail>  54              [id]  1            Rule 31
+35             <ids>  55              [id]  1            Rule 32
+36              [id]  1               [id]  1              match
+37        <more-ids>  56                 ,  37           Rule 33
+38                 ,  37                 ,  37             match
+39              [id]  1               [id]  1              match
+40        <more-ids>  56                 ,  37           Rule 33
+41                 ,  37                 ,  37             match
+42              [id]  1               [id]  1              match
+43        <more-ids>  56                 :  36           Rule 34
+44                 :  36                 :  36             match
+45            <type>  57              real  29           Rule 36
+46              real  29              real  29             match
+47                 ;  31                 ;  31             match
+48           <stmts>  51               def  13           Rule 18
+49            <stmt>  52               def  13           Rule 20
+50             <dcl>  53               def  13           Rule 30
+51               def  13               def  13             match
+52              [id]  1               [id]  1              match
+53                 (  34                 (  34             match
+54             <ids>  55              [id]  1            Rule 32
+55              [id]  1               [id]  1              match
+56        <more-ids>  56                 ,  37           Rule 33
+57                 ,  37                 ,  37             match
+58              [id]  1               [id]  1              match
+59        <more-ids>  56                 )  35           Rule 34
+60                 )  35                 )  35             match
+61           <block>  50                 {  32           Rule 17
+62                 {  32                 {  32             match
+63           <stmts>  51              [id]  1            Rule 18
+64            <stmt>  52              [id]  1            Rule 21
+65            <asmt>  58              [id]  1            Rule 38
+66              [id]  1               [id]  1              match
+67                <=  14                <=  14             match
+68            <expr>  65              [id]  1            Rule 45
+69      <arith-expr>  66              [id]  1            Rule 47
+70              [id]  1               [id]  1              match
+71           <arith>  67                 ;  31           Rule 52
+72                 ;  31                 ;  31             match
+73           <stmts>  51                 }  33           Rule 19
+74                 }  33                 }  33             match
+75                 ;  31                 ;  31             match
+76           <stmts>  51             while  17           Rule 18
+77            <stmt>  52             while  17           Rule 23
+78           <while>  60             while  17           Rule 40
+79             while  17             while  17             match
+80                 (  34                 (  34             match
+81            <expr>  65               not  23           Rule 46
+82       <bool-expr>  68               not  23           Rule 53
+83               not  23               not  23             match
+84                 (  34                 (  34             match
+85       <bool-expr>  68              true  24           Rule 54
+86              true  24              true  24             match
+87            <bool>  69                or  27           Rule 58
+88                or  27                or  27             match
+89       <bool-expr>  68             false  25           Rule 55
+90             false  25             false  25             match
+91            <bool>  69                 )  35           Rule 59
+92                 )  35                 )  35             match
+93            <bool>  69                 )  35           Rule 59
+94                 )  35                 )  35             match
+95            <stmt>  52            return  22           Rule 27
+96          <return>  64            return  22           Rule 44
+97            return  22            return  22             match
+98                 (  34                 (  34             match
+99            <expr>  65           [const]  2            Rule 45
+100     <arith-expr>  66           [const]  2            Rule 48
+101          [const]  2            [const]  2              match
+102          <arith>  67                 *  40           Rule 51
+103                *  40                 *  40             match
+104     <arith-expr>  66                 (  34           Rule 49
+105                (  34                 (  34             match
+106     <arith-expr>  66              [id]  1            Rule 47
+107             [id]  1               [id]  1              match
+108          <arith>  67                 +  39           Rule 50
+109                +  39                 +  39             match
+110     <arith-expr>  66           [const]  2            Rule 48
+111          [const]  2            [const]  2              match
+112          <arith>  67                 )  35           Rule 52
+113                )  35                 )  35             match
+114          <arith>  67                 )  35           Rule 52
+115                )  35                 )  35             match
+116                ;  31                 ;  31             match
+117          <stmts>  51                 }  33           Rule 19
+118                }  33                 }  33             match
+119     <scala-body>  45         protected  9             Rule 6
+120        <subbody>  46         protected  9             Rule 8
+121       <modifier>  47         protected  9            Rule 13
+122        protected  9          protected  9              match
+123   <subbody-tail>  48            object  11           Rule 14
+124      <tail-type>  49            object  11           Rule 16
+125           object  11            object  11             match
+126          <block>  50                 {  32           Rule 17
+127                {  32                 {  32             match
+128          <stmts>  51               val  12           Rule 18
+129           <stmt>  52               val  12           Rule 20
+130            <dcl>  53               val  12           Rule 29
+131              val  12               val  12             match
+132       <dcl-tail>  54              [id]  1            Rule 31
+133            <ids>  55              [id]  1            Rule 32
+134             [id]  1               [id]  1              match
+135       <more-ids>  56                 ,  37           Rule 33
+136                ,  37                 ,  37             match
+137             [id]  1               [id]  1              match
+138       <more-ids>  56                 ,  37           Rule 33
+139                ,  37                 ,  37             match
+140             [id]  1               [id]  1              match
+141       <more-ids>  56                 :  36           Rule 34
+142                :  36                 :  36             match
+143           <type>  57               int  28           Rule 35
+144              int  28               int  28             match
+145                ;  31                 ;  31             match
+146          <stmts>  51                if  15           Rule 18
+147           <stmt>  52                if  15           Rule 22
+148             <if>  59                if  15           Rule 39
+149               if  15                if  15             match
+150                (  34                 (  34             match
+151           <expr>  65                 @  41           Rule 46
+152      <bool-expr>  68                 @  41           Rule 56
+153                @  41                 @  41             match
+154     <arith-expr>  66              [id]  1            Rule 47
+155             [id]  1               [id]  1              match
+156          <arith>  67           [const]  2            Rule 52
+157     <arith-expr>  66           [const]  2            Rule 48
+158          [const]  2            [const]  2              match
+159          <arith>  67                 )  35           Rule 52
+160                )  35                 )  35             match
+161           <stmt>  52              case  18           Rule 24
+162           <case>  61              case  18           Rule 41
+163             case  18              case  18             match
+164             [id]  1               [id]  1              match
+165                =  38                 =  38             match
+166           <expr>  65              [id]  1            Rule 45
+167     <arith-expr>  66              [id]  1            Rule 47
+168             [id]  1               [id]  1              match
+169          <arith>  67                 +  39           Rule 50
+170                +  39                 +  39             match
+171     <arith-expr>  66              [id]  1            Rule 47
+172             [id]  1               [id]  1              match
+173          <arith>  67                 *  40           Rule 51
+174                *  40                 *  40             match
+175     <arith-expr>  66           [const]  2            Rule 48
+176          [const]  2            [const]  2              match
+177          <arith>  67                =>  19           Rule 52
+178               =>  19                =>  19             match
+179           <stmt>  52             print  21           Rule 26
+180            <out>  63             print  21           Rule 43
+181            print  21             print  21             match
+182                (  34                 (  34             match
+183            <ids>  55              [id]  1            Rule 32
+184             [id]  1               [id]  1              match
+185       <more-ids>  56                 )  35           Rule 34
+186                )  35                 )  35             match
+187                ;  31                 ;  31             match
+188             else  16              else  16             match
+189           <stmt>  52                in  20           Rule 25
+190             <in>  62                in  20           Rule 42
+191               in  20                in  20             match
+192                (  34                 (  34             match
+193            <ids>  55              [id]  1            Rule 32
+194             [id]  1               [id]  1              match
+195       <more-ids>  56                 ,  37           Rule 33
+196                ,  37                 ,  37             match
+197             [id]  1               [id]  1              match
+198       <more-ids>  56                 ,  37           Rule 33
+199                ,  37                 ,  37             match
+200             [id]  1               [id]  1              match
+201       <more-ids>  56                 )  35           Rule 34
+202                )  35                 )  35             match
+203                ;  31                 ;  31             match
+204          <stmts>  51                 }  33           Rule 19
+205                }  33                 }  33             match
+206     <scala-body>  45           private  8             Rule 6
+207        <subbody>  46           private  8             Rule 8
+208       <modifier>  47           private  8            Rule 12
+209          private  8            private  8              match
+210   <subbody-tail>  48             class  10           Rule 14
+211      <tail-type>  49             class  10           Rule 15
+212            class  10             class  10             match
+213          <block>  50                 {  32           Rule 17
+214                {  32                 {  32             match
+215          <stmts>  51               val  12           Rule 18
+216           <stmt>  52               val  12           Rule 20
+217            <dcl>  53               val  12           Rule 29
+218              val  12               val  12             match
+219       <dcl-tail>  54              [id]  1            Rule 31
+220            <ids>  55              [id]  1            Rule 32
+221             [id]  1               [id]  1              match
+222       <more-ids>  56                 ,  37           Rule 33
+223                ,  37                 ,  37             match
+224             [id]  1               [id]  1              match
+225       <more-ids>  56                 :  36           Rule 34
+226                :  36                 :  36             match
+227           <type>  57              bool  30           Rule 37
+228             bool  30              bool  30             match
+229                ;  31                 ;  31             match
+230          <stmts>  51            return  22           Rule 18
+231           <stmt>  52            return  22           Rule 27
+232         <return>  64            return  22           Rule 44
+233           return  22            return  22             match
+234                (  34                 (  34             match
+235           <expr>  65               not  23           Rule 46
+236      <bool-expr>  68               not  23           Rule 53
+237              not  23               not  23             match
+238                (  34                 (  34             match
+239      <bool-expr>  68              true  24           Rule 54
+240             true  24              true  24             match
+241           <bool>  69                or  27           Rule 58
+242               or  27                or  27             match
+243      <bool-expr>  68                 @  41           Rule 56
+244                @  41                 @  41             match
+245     <arith-expr>  66              [id]  1            Rule 47
+246             [id]  1               [id]  1              match
+247          <arith>  67           [const]  2            Rule 52
+248     <arith-expr>  66           [const]  2            Rule 48
+249          [const]  2            [const]  2              match
+250          <arith>  67                 )  35           Rule 52
+251                )  35                 )  35             match
+252           <bool>  69               and  26           Rule 57
+253              and  26               and  26             match
+254      <bool-expr>  68             false  25           Rule 55
+255            false  25             false  25             match
+256           <bool>  69                 )  35           Rule 59
+257                )  35                 )  35             match
+258                ;  31                 ;  31             match
+259          <stmts>  51                 }  33           Rule 19
+260                }  33                 }  33             match
+261     <scala-body>  45                 $  70            Rule 7
+262               Z0  0                  -  -            ACCEPT!

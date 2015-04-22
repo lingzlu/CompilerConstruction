@@ -1,3 +1,4 @@
+from collections import OrderedDict
 class Bookkeeper:
     """
     Responsible for maintaining a symbol table to store tokens passed from scanner
@@ -7,7 +8,8 @@ class Bookkeeper:
         """
         The Constructor to create a token with lexeme, type, and line number
         """
-        self.symtab = {}  # initialize an empty dictionary set
+        # initialize an empty ordered dictionary set
+        self.symtab = OrderedDict()
 
     def insert(self, token):
         """
@@ -17,9 +19,11 @@ class Bookkeeper:
         self.symtab[token.lexeme] = token.type  # insert new entry
 
     def printTable(self): # print the symbol table to a file
-        output = open("symbolTable.txt", "w")
-        output.write ("Symbol Table\n")
-        for token in self.symtab:
-            output.write ("%s\t%s\n"% (token, self.symtab[token]))
+        with open("symbolTable.txt", "w") as output:
+            output.write ("Symbol Table\n")
+            output.write ('{0:<8}{1:>12}\n'.format("Symbol", "Type"))
+            output.write ("-"*25+"\n")
 
+            for token in self.symtab:
+                output.write ('{0:<8}{1:>12}\n'.format(token, self.symtab[token]))
 

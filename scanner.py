@@ -20,7 +20,7 @@ class Scanner:
         self.lexeme = ""  #buffer to store scanned character
         self.tokens = []  # store next recognized tokens
         self.lexicalError = None
-        self.tokenBuffer=""
+        self.tokenBuffer = ""
 
     def getNextValidChar(self):
         """
@@ -46,9 +46,10 @@ class Scanner:
         """
         scan character by character to find the next token using DFA
         token separators are space and special symbols
-        this function might return up to 2 tokens when a special symbol is
-        concatenate with another token
+        when a special symbol is concatenate with another token, the second
+        token is stored in a buffer to be return in next function call
         """
+        # if token buffer not empyt, return that token
         if self.tokenBuffer:
             temp = self.tokenBuffer
             self.tokenBuffer = ""
@@ -62,8 +63,7 @@ class Scanner:
 
         char = self.getNextValidChar()
         if not char:  # end of the file found
-            self.tokens = None
-            return
+            return None
 
         self.lexeme += char  # keep track of scanned char before a token found
 
@@ -114,12 +114,8 @@ class Scanner:
             token.lexicalError = LexicalError.UnrecognizedSymbol
             self.tokens.append(token)
 
-        if not self.tokens:
-            return None
-
         if len(self.tokens) > 1:
             self.tokenBuffer = self.tokens[1]
-
 
         return self.tokens[0]
 
