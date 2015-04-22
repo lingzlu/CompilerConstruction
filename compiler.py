@@ -1,5 +1,6 @@
-"""CS 4323 Programming Assignment #1
-This project builds the first component of a compiler, the lexical analyzer
+"""
+CS 4323 Programming Assignment #1
+This project builds the first component of a compiler, the lexical analyzer,
 for so-called Simple-Scala language
 
 Author: Lingzhou Lu
@@ -10,6 +11,7 @@ import sys
 import collections
 from scanner import Scanner
 from bookkeeper import Bookkeeper
+from parser import Parser
 
 sourceFile = "source.txt"
 outputFile = "tokenOutput.txt"
@@ -25,7 +27,6 @@ def main():
         if not tokens:  # this only true when end of file reached
             break
         for token in tokens:  # might have 2 tokens when a special symbol follows
-            step += 1
             if not token.lexicalError:
                 output.write ("%d\t%s\t%s\t%d\n"% (step, token.lexeme, token.type, token.lineNum))
             else:
@@ -34,7 +35,15 @@ def main():
 
             if token.type == "ID" or token.type == "CONST":
                 symtab.insert(token)
+
+            step += 1
     symtab.printTable()
+
+    parser = Parser()
+    parser.executeRule(1)
+    parser.stack.print_stack()
+    print (parser.findRule(67,40))
+
 
 if __name__ == '__main__':
     main()

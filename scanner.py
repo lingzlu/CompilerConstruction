@@ -41,8 +41,6 @@ class Scanner:
                 break  # anything none space or comment line will break
         return char
 
-    # scan for next token, might return up to 2 tokens
-    # when a special symbol is concatenate with the token
     def nextToken(self):
         """
         scan character by character to find the next token using DFA
